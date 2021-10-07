@@ -1,2 +1,4 @@
 *.txz
 user_config.json
+cache/
+images/
