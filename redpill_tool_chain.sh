@@ -33,6 +33,8 @@ function buildImage(){
     [ "${USE_BUILDKIT}" == "true" ] && export DOCKER_BUILDKIT=1
     docker build --file docker/Dockerfile --force-rm  --pull \
         $( [ "${USE_BUILD_CACHE}" == "false" ] && echo "--no-cache" ) \
+        $( [ "${http_proxy}" == "" ] || echo "--build-arg http_proxy" ) \
+        $( [ "${https_proxy}" == "" ] || echo "--build-arg https_proxy" ) \
         --build-arg DOCKER_BASE_IMAGE="${DOCKER_BASE_IMAGE}" \
         --build-arg COMPILE_WITH="${COMPILE_WITH}" \
         --build-arg EXTRACTED_KSRC="${EXTRACTED_KSRC}" \
@@ -106,6 +108,8 @@ function runContainer(){
         $( [ -e "${USER_CONFIG_JSON}" ] && echo "--volume $(realpath ${USER_CONFIG_JSON}):/opt/redpill-load/user_config.json") \
         --volume ${REDPILL_LOAD_CACHE}:/opt/redpill-load/cache \
         --volume ${REDPILL_LOAD_IMAGES}:/opt/redpill-load/images \
+        $( [ "${http_proxy}" == "" ] || echo "--env http_proxy") \
+        $( [ "${https_proxy}" == "" ] || echo "--env https_proxy") \
         --env REDPILL_LKM_MAKE_TARGET=${REDPILL_LKM_MAKE_TARGET} \
         --env TARGET_PLATFORM="${TARGET_PLATFORM}" \
         --env TARGET_VERSION="${TARGET_VERSION}" \
